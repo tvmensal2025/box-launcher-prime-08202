@@ -3,6 +3,8 @@ import { TVHeader } from "@/components/TVHeader";
 import { AppIcon } from "@/components/AppIcon";
 import { FeaturedBanner } from "@/components/FeaturedBanner";
 import { toast } from "@/components/ui/use-toast";
+import { useAdmin } from "@/contexts/AdminContext";
+import * as LucideIcons from "lucide-react";
 import {
   Youtube,
   Tv,
@@ -12,6 +14,14 @@ import {
   Chrome,
   Globe,
   Smartphone,
+  Wifi,
+  WifiOff,
+  Volume2,
+  Sun,
+  Shield,
+  Monitor,
+  Power,
+  Menu,
 } from "lucide-react";
 
 interface App {
@@ -22,39 +32,85 @@ interface App {
   packageName?: string;
 }
 
-const apps: App[] = [
+const systemApps: App[] = [
   { 
-    id: "youtube", 
-    icon: Youtube, 
-    label: "YouTube",
-    url: "https://www.youtube.com",
-    packageName: "com.google.android.youtube.tv"
+    id: "settings", 
+    icon: Settings, 
+    label: "Configurações",
+    packageName: "com.android.settings"
   },
   { 
-    id: "netflix", 
-    icon: Tv, 
-    label: "Netflix",
-    url: "https://www.netflix.com",
-    packageName: "com.netflix.ninja"
+    id: "wifi", 
+    icon: Wifi, 
+    label: "WiFi",
+    packageName: "com.android.settings"
   },
   { 
-    id: "spotify", 
-    icon: Music, 
-    label: "Spotify",
-    url: "https://open.spotify.com",
-    packageName: "com.spotify.tv.android"
+    id: "volume", 
+    icon: Volume2, 
+    label: "Volume",
+    packageName: "com.android.settings"
+  },
+  { 
+    id: "brightness", 
+    icon: Sun, 
+    label: "Brilho",
+    packageName: "com.android.settings"
+  },
+  { 
+    id: "security", 
+    icon: Shield, 
+    label: "Segurança",
+    packageName: "com.android.settings"
+  },
+  { 
+    id: "display", 
+    icon: Monitor, 
+    label: "Tela",
+    packageName: "com.android.settings"
   },
 ];
 
 const Index = () => {
+  const { settings } = useAdmin();
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const [section, setSection] = useState<'banner' | 'apps'>('banner');
-  const columns = 3;
+  const [section, setSection] = useState<'banner' | 'system' | 'media'>('banner');
+  const [currentAppList, setCurrentAppList] = useState<App[]>(systemApps);
+  const columns = 6; // 6 colunas para apps do sistema
+
+  // Converter apps do admin para o formato do componente
+  const mediaApps = settings.apps
+    .filter(app => app.enabled)
+    .sort((a, b) => a.order - b.order)
+    .map(app => ({
+      id: app.id,
+      icon: (LucideIcons as any)[app.icon] || Globe,
+      label: app.name,
+      url: app.url,
+      packageName: app.packageName
+    }));
 
   const openApp = (app: App) => {
     if (app.packageName) {
-      // Open native Android app
-      window.location.href = `intent://#Intent;package=${app.packageName};end`;
+      if (app.id === 'wifi') {
+        // Abrir configurações de WiFi especificamente
+        window.location.href = `intent://#Intent;action=android.settings.WIFI_SETTINGS;end`;
+      } else if (app.id === 'volume') {
+        // Abrir configurações de som
+        window.location.href = `intent://#Intent;action=android.settings.SOUND_SETTINGS;end`;
+      } else if (app.id === 'brightness') {
+        // Abrir configurações de brilho
+        window.location.href = `intent://#Intent;action=android.settings.DISPLAY_SETTINGS;end`;
+      } else if (app.id === 'security') {
+        // Abrir configurações de segurança
+        window.location.href = `intent://#Intent;action=android.settings.SECURITY_SETTINGS;end`;
+      } else if (app.id === 'display') {
+        // Abrir configurações de tela
+        window.location.href = `intent://#Intent;action=android.settings.DISPLAY_SETTINGS;end`;
+      } else {
+        // Abrir configurações gerais
+        window.location.href = `intent://#Intent;package=${app.packageName};end`;
+      }
     } else if (app.url) {
       window.open(app.url, '_blank');
     }
@@ -67,27 +123,32 @@ const Index = () => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      const totalApps = apps.length;
+      const totalApps = currentAppList.length;
       const currentRow = Math.floor(focusedIndex / columns);
       const currentCol = focusedIndex % columns;
 
       switch (e.key) {
         case "ArrowRight":
           e.preventDefault();
-          if (section === 'apps') {
+          if (section === 'system' || section === 'media') {
             setFocusedIndex((prev) => (prev + 1) % totalApps);
           }
           break;
         case "ArrowLeft":
           e.preventDefault();
-          if (section === 'apps') {
+          if (section === 'system' || section === 'media') {
             setFocusedIndex((prev) => (prev - 1 + totalApps) % totalApps);
           }
           break;
         case "ArrowDown":
           e.preventDefault();
           if (section === 'banner') {
-            setSection('apps');
+            setSection('system');
+            setCurrentAppList(systemApps);
+            setFocusedIndex(0);
+          } else if (section === 'system') {
+            setSection('media');
+            setCurrentAppList(mediaApps);
             setFocusedIndex(0);
           } else {
             const nextRowIndex = (currentRow + 1) * columns + currentCol;
@@ -96,8 +157,12 @@ const Index = () => {
           break;
         case "ArrowUp":
           e.preventDefault();
-          if (section === 'apps' && currentRow === 0) {
+          if (section === 'system' && currentRow === 0) {
             setSection('banner');
+          } else if (section === 'media' && currentRow === 0) {
+            setSection('system');
+            setCurrentAppList(systemApps);
+            setFocusedIndex(0);
           } else if (currentRow > 0) {
             setFocusedIndex((currentRow - 1) * columns + currentCol);
           }
@@ -111,12 +176,12 @@ const Index = () => {
               description: "Seu serviço de streaming premium",
             });
           } else {
-            openApp(apps[focusedIndex]);
+            openApp(currentAppList[focusedIndex]);
           }
           break;
       }
     },
-    [focusedIndex, columns, section]
+    [focusedIndex, columns, section, currentAppList]
   );
 
   useEffect(() => {
@@ -129,35 +194,61 @@ const Index = () => {
       <TVHeader />
       
       <main className="flex-1 px-12 py-8 space-y-8 overflow-y-auto">
-        <section>
-          <FeaturedBanner
-            title="CHEGOU A HORA"
-            subtitle="DE VOCÊ TER TUDO"
-            logo="RedPlay"
-            focused={section === 'banner'}
-            onClick={() => {
-              window.open('https://redplay.com.br', '_blank');
-              toast({
-                title: "Abrindo RedPlay",
-                description: "Seu serviço de streaming premium",
-              });
-            }}
-          />
-        </section>
+        {settings.banner.enabled && (
+          <section>
+            <FeaturedBanner
+              title={settings.banner.title}
+              subtitle={settings.banner.subtitle}
+              logo={settings.banner.logo}
+              focused={section === 'banner'}
+              onClick={() => {
+                window.open('https://redplay.com.br', '_blank');
+                toast({
+                  title: "Abrindo RedPlay",
+                  description: "Seu serviço de streaming premium",
+                });
+              }}
+            />
+          </section>
+        )}
 
         <section>
           <h2 className="text-3xl font-semibold text-foreground mb-6 px-2">
-            Aplicativos
+            Sistema
           </h2>
-          <div className="grid grid-cols-3 gap-8">
-            {apps.map((app, index) => (
+          <div className="grid grid-cols-6 gap-4 mb-8">
+            {systemApps.map((app, index) => (
               <AppIcon
                 key={app.id}
                 icon={app.icon}
                 label={app.label}
-                focused={section === 'apps' && focusedIndex === index}
+                size="small"
+                focused={section === 'system' && focusedIndex === index}
                 onClick={() => {
-                  setSection('apps');
+                  setSection('system');
+                  setCurrentAppList(systemApps);
+                  setFocusedIndex(index);
+                  openApp(app);
+                }}
+              />
+            ))}
+          </div>
+        </section>
+
+        <section>
+          <h2 className="text-3xl font-semibold text-foreground mb-6 px-2">
+            Entretenimento
+          </h2>
+          <div className="grid grid-cols-3 gap-8">
+            {mediaApps.map((app, index) => (
+              <AppIcon
+                key={app.id}
+                icon={app.icon}
+                label={app.label}
+                focused={section === 'media' && focusedIndex === index}
+                onClick={() => {
+                  setSection('media');
+                  setCurrentAppList(mediaApps);
                   setFocusedIndex(index);
                   openApp(app);
                 }}
@@ -167,7 +258,7 @@ const Index = () => {
         </section>
 
         <div className="fixed bottom-4 right-6 text-xs text-muted-foreground bg-card/80 px-3 py-1.5 rounded border border-border">
-          Use as setas ← → ↑ ↓ para navegar | Enter para abrir
+          Use as setas ← → ↑ ↓ para navegar | Enter para abrir | ↑↓ para alternar seções
         </div>
       </main>
     </div>
