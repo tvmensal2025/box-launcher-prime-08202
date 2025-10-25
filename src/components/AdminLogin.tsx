@@ -7,21 +7,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Settings, Eye, EyeOff } from 'lucide-react';
 
 export const AdminLogin = () => {
-  const { loginAdmin } = useAdmin();
+  const { loginAdmin, isAdminMode } = useAdmin();
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setIsLoggingIn(true);
+    
+    // Simular um pequeno delay para melhor UX
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     if (loginAdmin(password)) {
       setPassword('');
+      // O painel admin será aberto automaticamente devido ao isAdminMode
     } else {
       setError('Senha incorreta');
     }
+    
+    setIsLoggingIn(false);
   };
+
+  // Não mostrar o formulário de login se já estiver logado
+  if (isAdminMode) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-6 left-6 z-40">
@@ -35,6 +48,10 @@ export const AdminLogin = () => {
           </CardTitle>
           <CardDescription className="text-sm">
             Digite a senha para personalizar o launcher
+            <br />
+            <span className="text-xs text-muted-foreground">
+              Pressione ESC para fechar o painel
+            </span>
           </CardDescription>
         </CardHeader>
         
@@ -70,8 +87,13 @@ export const AdminLogin = () => {
               )}
             </div>
             
-            <Button type="submit" size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">
-              Entrar
+            <Button 
+              type="submit" 
+              size="sm" 
+              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? 'Entrando...' : 'Entrar'}
             </Button>
           </form>
         </CardContent>

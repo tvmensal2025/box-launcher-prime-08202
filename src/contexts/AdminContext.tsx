@@ -10,6 +10,32 @@ export interface AppConfig {
   order: number;
 }
 
+export interface MusicAppConfig {
+  id: string;
+  name: string;
+  icon: string;
+  url?: string;
+  packageName?: string;
+  enabled: boolean;
+  order: number;
+  category: 'streaming' | 'local' | 'radio';
+}
+
+export interface LocalMusic {
+  id: string;
+  title: string;
+  artist: string;
+  album?: string;
+  duration: number;
+  file: File;
+  url: string;
+  cover?: string;
+  enabled: boolean;
+  order: number;
+  loop: boolean;
+  autoPlay: boolean;
+}
+
 export interface BannerConfig {
   title: string;
   subtitle: string;
@@ -39,6 +65,8 @@ export interface ClockConfig {
 
 export interface AdminSettings {
   apps: AppConfig[];
+  musicApps: MusicAppConfig[];
+  localMusic: LocalMusic[];
   banner: BannerConfig;
   theme: ThemeConfig;
   clock: ClockConfig;
@@ -73,6 +101,99 @@ const defaultSettings: AdminSettings = {
       order: 2
     }
   ],
+  musicApps: [
+    {
+      id: 'spotify',
+      name: 'Spotify',
+      icon: 'Music',
+      packageName: 'com.spotify.music',
+      enabled: true,
+      order: 0,
+      category: 'streaming'
+    },
+    {
+      id: 'youtube-music',
+      name: 'YouTube Music',
+      icon: 'Youtube',
+      packageName: 'com.google.android.apps.youtube.music',
+      enabled: true,
+      order: 1,
+      category: 'streaming'
+    },
+    {
+      id: 'deezer',
+      name: 'Deezer',
+      icon: 'Music',
+      packageName: 'deezer.android.app',
+      enabled: true,
+      order: 2,
+      category: 'streaming'
+    },
+    {
+      id: 'apple-music',
+      name: 'Apple Music',
+      icon: 'Music',
+      packageName: 'com.apple.android.music',
+      enabled: true,
+      order: 3,
+      category: 'streaming'
+    },
+    {
+      id: 'tidal',
+      name: 'Tidal',
+      icon: 'Music',
+      packageName: 'com.aspiro.tidal',
+      enabled: true,
+      order: 4,
+      category: 'streaming'
+    },
+    {
+      id: 'soundcloud',
+      name: 'SoundCloud',
+      icon: 'Music',
+      packageName: 'com.soundcloud.android',
+      enabled: true,
+      order: 5,
+      category: 'streaming'
+    },
+    {
+      id: 'amazon-music',
+      name: 'Amazon Music',
+      icon: 'Music',
+      packageName: 'com.amazon.mp3',
+      enabled: true,
+      order: 6,
+      category: 'streaming'
+    },
+    {
+      id: 'pandora',
+      name: 'Pandora',
+      icon: 'Music',
+      packageName: 'com.pandora.android',
+      enabled: true,
+      order: 7,
+      category: 'streaming'
+    },
+    {
+      id: 'iheartradio',
+      name: 'iHeartRadio',
+      icon: 'Radio',
+      packageName: 'com.clearchannel.iheartradio.controller',
+      enabled: true,
+      order: 8,
+      category: 'radio'
+    },
+    {
+      id: 'tunein',
+      name: 'TuneIn Radio',
+      icon: 'Radio',
+      packageName: 'tunein.player',
+      enabled: true,
+      order: 9,
+      category: 'radio'
+    }
+  ],
+  localMusic: [],
   banner: {
     title: 'CHEGOU A HORA',
     subtitle: 'DE VOCÊ TER TUDO',
