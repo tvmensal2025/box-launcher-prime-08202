@@ -17,12 +17,14 @@ import {
   Trash2, 
   GripVertical,
   Eye,
-  EyeOff
+  EyeOff,
+  Power
 } from 'lucide-react';
 
 export const AdminPanel = () => {
   const { settings, updateSettings, isAdminMode, setAdminMode, logoutAdmin } = useAdmin();
   const [showPassword, setShowPassword] = useState(false);
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
 
   const updateApps = (newApps: AppConfig[]) => {
     updateSettings({ apps: newApps });
@@ -107,10 +109,45 @@ export const AdminPanel = () => {
     updateMusicApps(newMusicApps);
   };
 
+  // Mostrar mensagem de boas-vindas quando o painel for aberto
+  React.useEffect(() => {
+    if (isAdminMode) {
+      setShowWelcomeMessage(true);
+      const timer = setTimeout(() => {
+        setShowWelcomeMessage(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isAdminMode]);
+
+  // Fechar painel com tecla Escape
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isAdminMode) {
+        logoutAdmin();
+      }
+    };
+
+    if (isAdminMode) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => window.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [isAdminMode, logoutAdmin]);
+
   if (!isAdminMode) return null;
 
   return (
     <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+      {/* Mensagem de boas-vindas */}
+      {showWelcomeMessage && (
+        <div className="fixed top-6 right-6 z-60 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg animate-in slide-in-from-right duration-300">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-300 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">Login realizado com sucesso!</span>
+          </div>
+        </div>
+      )}
+      
       <Card className="w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-elevated border-2 border-border/50">
         <CardHeader className="bg-gradient-to-r from-tv-sidebar to-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
           <div className="flex items-center justify-between">
@@ -125,8 +162,13 @@ export const AdminPanel = () => {
                 Personalize completamente seu launcher TV Box de forma profissional
               </CardDescription>
             </div>
-            <Button variant="outline" onClick={logoutAdmin} className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive">
-              Sair
+            <Button 
+              variant="outline" 
+              onClick={logoutAdmin} 
+              className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive transition-colors"
+            >
+              <Power className="w-4 h-4 mr-2" />
+              Sair do Admin
             </Button>
           </div>
         </CardHeader>
