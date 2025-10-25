@@ -17,8 +17,10 @@ import {
   Trash2, 
   GripVertical,
   Eye,
-  EyeOff
+  EyeOff,
+  BarChart3
 } from 'lucide-react';
+import { Dashboard } from './Dashboard';
 
 export const AdminPanel = () => {
   const { settings, updateSettings, isAdminMode, setAdminMode, logoutAdmin } = useAdmin();
@@ -74,9 +76,9 @@ export const AdminPanel = () => {
   if (!isAdminMode) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+    <div className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-6">
       <Card className="w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-elevated border-2 border-border/50">
-        <CardHeader className="bg-gradient-to-r from-tv-sidebar to-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
+        <CardHeader className="bg-gradient-to-r from-tv-sidebar to-card border-b border-border/50 sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <CardTitle className="flex items-center gap-3 text-2xl">
@@ -96,8 +98,12 @@ export const AdminPanel = () => {
         </CardHeader>
         
         <CardContent className="overflow-y-auto max-h-[calc(92vh-140px)] p-6">
-          <Tabs defaultValue="apps" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1">
+          <Tabs defaultValue="dashboard" className="w-full">
+            <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/50 p-1">
+              <TabsTrigger value="dashboard" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Dashboard
+              </TabsTrigger>
               <TabsTrigger value="apps" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Apps
               </TabsTrigger>
@@ -111,6 +117,10 @@ export const AdminPanel = () => {
                 Relógio
               </TabsTrigger>
             </TabsList>
+
+            <TabsContent value="dashboard" className="space-y-6 pt-6">
+              <Dashboard />
+            </TabsContent>
 
             <TabsContent value="apps" className="space-y-6 pt-6">
               <div className="flex justify-between items-center">
