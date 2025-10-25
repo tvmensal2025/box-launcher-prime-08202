@@ -286,7 +286,12 @@ export const AdminPanel = () => {
                     <Music className="w-5 h-5 text-primary" />
                     Gerenciar Apps de Música
                   </h3>
-                  <p className="text-sm text-muted-foreground mt-1">Configure os apps de música que aparecem no launcher</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Configure os apps de música que aparecem no launcher
+                    <span className="ml-2 px-2 py-1 bg-primary/10 text-primary rounded-full text-xs">
+                      {settings.musicApps.filter(app => app.enabled).length} ativos
+                    </span>
+                  </p>
                 </div>
                 <div className="flex gap-2">
                   <Select value={musicFilter} onValueChange={(value: any) => setMusicFilter(value)}>
@@ -315,6 +320,17 @@ export const AdminPanel = () => {
                   <Card key={app.id} className="p-5 bg-gradient-to-br from-card to-card/50 border-border/50 hover:border-primary/30 transition-colors">
                     <div className="flex items-center gap-4">
                       <GripVertical className="w-5 h-5 text-muted-foreground cursor-move hover:text-primary transition-colors" />
+                      
+                      <div className="flex flex-col items-center gap-1">
+                        <div className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          app.category === 'streaming' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                          app.category === 'radio' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                          'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+                        }`}>
+                          {app.category === 'streaming' ? 'Streaming' : 
+                           app.category === 'radio' ? 'Rádio' : 'Local'}
+                        </div>
+                      </div>
                       
                       <div className="flex-1 grid grid-cols-2 gap-4">
                         <div>
