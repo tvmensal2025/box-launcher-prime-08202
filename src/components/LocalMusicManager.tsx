@@ -43,7 +43,9 @@ export const LocalMusicManager = () => {
           file: file,
           url: url,
           enabled: true,
-          order: settings.localMusic.length
+          order: settings.localMusic.length,
+          loop: true, // Por padrão, música toca em loop
+          autoPlay: true // Por padrão, música toca automaticamente
         };
 
         // Criar elemento de áudio para obter duração
@@ -84,6 +86,7 @@ export const LocalMusicManager = () => {
     } else {
       if (audioRef.current) {
         audioRef.current.src = music.url;
+        audioRef.current.loop = music.loop;
         audioRef.current.play();
       }
       setIsPlaying(music.id);
@@ -180,21 +183,45 @@ export const LocalMusicManager = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-4">
                 <div className="text-sm text-muted-foreground flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {formatTime(music.duration)}
                 </div>
                 
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id={`music-enabled-${music.id}`}
-                    checked={music.enabled}
-                    onChange={(e) => updateMusic(music.id, { enabled: e.target.checked })}
-                    className="rounded"
-                  />
-                  <Label htmlFor={`music-enabled-${music.id}`} className="text-sm">Ativo</Label>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`music-enabled-${music.id}`}
+                      checked={music.enabled}
+                      onChange={(e) => updateMusic(music.id, { enabled: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor={`music-enabled-${music.id}`} className="text-sm">Ativo</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`music-loop-${music.id}`}
+                      checked={music.loop}
+                      onChange={(e) => updateMusic(music.id, { loop: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor={`music-loop-${music.id}`} className="text-sm">Loop</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`music-autoplay-${music.id}`}
+                      checked={music.autoPlay}
+                      onChange={(e) => updateMusic(music.id, { autoPlay: e.target.checked })}
+                      className="rounded"
+                    />
+                    <Label htmlFor={`music-autoplay-${music.id}`} className="text-sm">Auto Play</Label>
+                  </div>
                 </div>
                 
                 <Button

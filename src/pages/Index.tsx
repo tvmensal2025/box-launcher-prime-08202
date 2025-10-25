@@ -76,6 +76,7 @@ const Index = () => {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [section, setSection] = useState<'banner' | 'system' | 'media' | 'music'>('banner');
   const [currentAppList, setCurrentAppList] = useState<App[]>(systemApps);
+  const [backgroundMusic, setBackgroundMusic] = useState<HTMLAudioElement | null>(null);
   const columns = 6; // 6 colunas para apps do sistema
 
   // Converter apps do admin para o formato do componente
@@ -138,13 +139,18 @@ const Index = () => {
     } else if (app.url) {
       // Verificar se é uma música local
       if (app.url.startsWith('blob:')) {
-        // Criar elemento de áudio para tocar música local
-        const audio = new Audio(app.url);
-        audio.play().catch(console.error);
-        toast({
-          title: `Tocando ${app.label}`,
-          description: "Música local iniciada",
-        });
+        // Encontrar a música local correspondente
+        const localMusic = settings.localMusic.find(music => music.url === app.url);
+        if (localMusic) {
+          // Criar elemento de áudio para tocar música local
+          const audio = new Audio(app.url);
+          audio.loop = localMusic.loop;
+          audio.play().catch(console.error);
+          toast({
+            title: `Tocando ${app.label}`,
+            description: localMusic.loop ? "Música em loop contínuo" : "Música local iniciada",
+          });
+        }
       } else {
         window.open(app.url, '_blank');
         toast({
@@ -225,6 +231,23 @@ const Index = () => {
     },
     [focusedIndex, columns, section, currentAppList]
   );
+
+  // Tocar música de fundo em loop se configurada
+  useEffect(() => {
+    const enabledMusic = settings.localMusic.find(music => music.enabled && music.autoPlay && music.loop);
+    if (enabledMusic) {
+      const audio = new Audio(enabledMusic.url);
+      audio.loop = true;
+      audio.volume = 0.3; // Volume baixo para música de fundo
+      audio.play().catch(console.error);
+      setBackgroundMusic(audio);
+      
+      return () => {
+        audio.pause();
+        audio.remove();
+      };
+    }
+  }, [settings.localMusic]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -340,6 +363,25 @@ const Index = () => {
         <div className="fixed bottom-4 right-6 text-xs text-muted-foreground bg-card/80 px-3 py-1.5 rounded border border-border">
           Use as setas ← → ↑ ↓ para navegar | Enter para abrir | ↑↓ para alternar seções (Banner → Sistema → Entretenimento → Música)
         </div>
+
+        {/* Indicador de música tocando */}
+        {backgroundMusic && (
+          <div className="fixed top-4 right-4 bg-primary/90 text-primary-foreground px-3 py-2 rounded-lg shadow-lg flex items-center gap-2">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">Música tocando em loop</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                backgroundMusic.pause();
+                setBackgroundMusic(null);
+              }}
+              className="h-6 w-6 p-0 hover:bg-white/20"
+            >
+              ×
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );

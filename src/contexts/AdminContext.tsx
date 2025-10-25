@@ -32,6 +32,8 @@ export interface LocalMusic {
   cover?: string;
   enabled: boolean;
   order: number;
+  loop: boolean;
+  autoPlay: boolean;
 }
 
 export interface BannerConfig {
