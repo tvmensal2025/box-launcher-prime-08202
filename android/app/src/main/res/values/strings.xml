@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">box-launcher-prime</string>
+    <string name="title_activity_main">box-launcher-prime</string>
+    <string name="package_name">app.lovable.d120bccb11ae4d19bdab3098dc47255c</string>
+    <string name="custom_url_scheme">app.lovable.d120bccb11ae4d19bdab3098dc47255c</string>
+</resources>
