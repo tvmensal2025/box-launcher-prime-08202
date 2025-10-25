@@ -25,6 +25,7 @@ export const AdminPanel = () => {
   const { settings, updateSettings, isAdminMode, setAdminMode, logoutAdmin } = useAdmin();
   const [showPassword, setShowPassword] = useState(false);
   const [showWelcomeMessage, setShowWelcomeMessage] = useState(false);
+  const [musicFilter, setMusicFilter] = useState<'all' | 'streaming' | 'local' | 'radio'>('all');
 
   const updateApps = (newApps: AppConfig[]) => {
     updateSettings({ apps: newApps });
@@ -287,14 +288,28 @@ export const AdminPanel = () => {
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1">Configure os apps de música que aparecem no launcher</p>
                 </div>
-                <Button onClick={addMusicApp} size="default" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar App de Música
-                </Button>
+                <div className="flex gap-2">
+                  <Select value={musicFilter} onValueChange={(value: any) => setMusicFilter(value)}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as Categorias</SelectItem>
+                      <SelectItem value="streaming">Streaming</SelectItem>
+                      <SelectItem value="local">Local</SelectItem>
+                      <SelectItem value="radio">Rádio</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button onClick={addMusicApp} size="default" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Adicionar App
+                  </Button>
+                </div>
               </div>
               
               <div className="space-y-4">
                 {settings.musicApps
+                  .filter(app => musicFilter === 'all' || app.category === musicFilter)
                   .sort((a, b) => a.order - b.order)
                   .map((app, index) => (
                   <Card key={app.id} className="p-5 bg-gradient-to-br from-card to-card/50 border-border/50 hover:border-primary/30 transition-colors">

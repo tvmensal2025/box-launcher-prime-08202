@@ -139,6 +139,42 @@ const defaultSettings: AdminSettings = {
       enabled: true,
       order: 5,
       category: 'streaming'
+    },
+    {
+      id: 'amazon-music',
+      name: 'Amazon Music',
+      icon: 'Music',
+      packageName: 'com.amazon.mp3',
+      enabled: true,
+      order: 6,
+      category: 'streaming'
+    },
+    {
+      id: 'pandora',
+      name: 'Pandora',
+      icon: 'Music',
+      packageName: 'com.pandora.android',
+      enabled: true,
+      order: 7,
+      category: 'streaming'
+    },
+    {
+      id: 'iheartradio',
+      name: 'iHeartRadio',
+      icon: 'Radio',
+      packageName: 'com.clearchannel.iheartradio.controller',
+      enabled: true,
+      order: 8,
+      category: 'radio'
+    },
+    {
+      id: 'tunein',
+      name: 'TuneIn Radio',
+      icon: 'Radio',
+      packageName: 'tunein.player',
+      enabled: true,
+      order: 9,
+      category: 'radio'
     }
   ],
   banner: {
