@@ -102,6 +102,18 @@ const Index = () => {
       packageName: app.packageName
     }));
 
+  // Converter músicas locais para o formato do componente
+  const localMusicApps = settings.localMusic
+    .filter(music => music.enabled)
+    .sort((a, b) => a.order - b.order)
+    .map(music => ({
+      id: music.id,
+      icon: Music,
+      label: `${music.title} - ${music.artist}`,
+      url: music.url,
+      packageName: undefined
+    }));
+
   const openApp = (app: App) => {
     if (app.packageName) {
       if (app.id === 'wifi') {
@@ -124,13 +136,23 @@ const Index = () => {
         window.location.href = `intent://#Intent;package=${app.packageName};end`;
       }
     } else if (app.url) {
-      window.open(app.url, '_blank');
+      // Verificar se é uma música local
+      if (app.url.startsWith('blob:')) {
+        // Criar elemento de áudio para tocar música local
+        const audio = new Audio(app.url);
+        audio.play().catch(console.error);
+        toast({
+          title: `Tocando ${app.label}`,
+          description: "Música local iniciada",
+        });
+      } else {
+        window.open(app.url, '_blank');
+        toast({
+          title: `Abrindo ${app.label}`,
+          description: "Aguarde um momento...",
+        });
+      }
     }
-    
-    toast({
-      title: `Abrindo ${app.label}`,
-      description: "Aguarde um momento...",
-    });
   };
 
   const handleKeyDown = useCallback(
@@ -164,7 +186,7 @@ const Index = () => {
             setFocusedIndex(0);
           } else if (section === 'media') {
             setSection('music');
-            setCurrentAppList(musicApps);
+            setCurrentAppList([...musicApps, ...localMusicApps]);
             setFocusedIndex(0);
           } else {
             const nextRowIndex = (currentRow + 1) * columns + currentCol;
@@ -282,6 +304,7 @@ const Index = () => {
             Música
           </h2>
           <div className="grid grid-cols-3 gap-8">
+            {/* Apps de música */}
             {musicApps.map((app, index) => (
               <AppIcon
                 key={app.id}
@@ -290,8 +313,23 @@ const Index = () => {
                 focused={section === 'music' && focusedIndex === index}
                 onClick={() => {
                   setSection('music');
-                  setCurrentAppList(musicApps);
+                  setCurrentAppList([...musicApps, ...localMusicApps]);
                   setFocusedIndex(index);
+                  openApp(app);
+                }}
+              />
+            ))}
+            {/* Músicas locais */}
+            {localMusicApps.map((app, index) => (
+              <AppIcon
+                key={app.id}
+                icon={app.icon}
+                label={app.label}
+                focused={section === 'music' && focusedIndex === (musicApps.length + index)}
+                onClick={() => {
+                  setSection('music');
+                  setCurrentAppList([...musicApps, ...localMusicApps]);
+                  setFocusedIndex(musicApps.length + index);
                   openApp(app);
                 }}
               />

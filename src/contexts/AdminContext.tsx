@@ -21,6 +21,19 @@ export interface MusicAppConfig {
   category: 'streaming' | 'local' | 'radio';
 }
 
+export interface LocalMusic {
+  id: string;
+  title: string;
+  artist: string;
+  album?: string;
+  duration: number;
+  file: File;
+  url: string;
+  cover?: string;
+  enabled: boolean;
+  order: number;
+}
+
 export interface BannerConfig {
   title: string;
   subtitle: string;
@@ -51,6 +64,7 @@ export interface ClockConfig {
 export interface AdminSettings {
   apps: AppConfig[];
   musicApps: MusicAppConfig[];
+  localMusic: LocalMusic[];
   banner: BannerConfig;
   theme: ThemeConfig;
   clock: ClockConfig;
@@ -177,6 +191,7 @@ const defaultSettings: AdminSettings = {
       category: 'radio'
     }
   ],
+  localMusic: [],
   banner: {
     title: 'CHEGOU A HORA',
     subtitle: 'DE VOCÊ TER TUDO',

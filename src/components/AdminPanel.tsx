@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAdmin, AppConfig, MusicAppConfig, BannerConfig, ThemeConfig, ClockConfig } from '@/contexts/AdminContext';
+import { LocalMusicManager } from './LocalMusicManager';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -176,12 +177,15 @@ export const AdminPanel = () => {
         
         <CardContent className="overflow-y-auto max-h-[calc(92vh-140px)] p-6">
           <Tabs defaultValue="apps" className="w-full">
-            <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/50 p-1">
+            <TabsList className="grid w-full grid-cols-6 h-12 bg-muted/50 p-1">
               <TabsTrigger value="apps" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Apps
               </TabsTrigger>
               <TabsTrigger value="music" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Música
+              </TabsTrigger>
+              <TabsTrigger value="local-music" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Suas Músicas
               </TabsTrigger>
               <TabsTrigger value="banner" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Banner
@@ -412,6 +416,10 @@ export const AdminPanel = () => {
                   </Card>
                 ))}
               </div>
+            </TabsContent>
+
+            <TabsContent value="local-music" className="space-y-6 pt-6">
+              <LocalMusicManager />
             </TabsContent>
 
             <TabsContent value="banner" className="space-y-6 pt-6">
