@@ -155,7 +155,7 @@ export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       settings,
       updateSettings,
       isAdminMode,
-      setAdminMode,
+      setAdminMode: setIsAdminMode,
       loginAdmin,
       logoutAdmin
     }}>
