@@ -3,6 +3,8 @@ import { TVHeader } from "@/components/TVHeader";
 import { AppIcon } from "@/components/AppIcon";
 import { FeaturedBanner } from "@/components/FeaturedBanner";
 import { toast } from "@/components/ui/use-toast";
+import { useAdmin } from "@/contexts/AdminContext";
+import * as LucideIcons from "lucide-react";
 import {
   Youtube,
   Tv,
@@ -69,35 +71,24 @@ const systemApps: App[] = [
   },
 ];
 
-const mediaApps: App[] = [
-  { 
-    id: "youtube", 
-    icon: Youtube, 
-    label: "YouTube",
-    url: "https://www.youtube.com",
-    packageName: "com.google.android.youtube.tv"
-  },
-  { 
-    id: "netflix", 
-    icon: Tv, 
-    label: "Netflix",
-    url: "https://www.netflix.com",
-    packageName: "com.netflix.ninja"
-  },
-  { 
-    id: "spotify", 
-    icon: Music, 
-    label: "Spotify",
-    url: "https://open.spotify.com",
-    packageName: "com.spotify.tv.android"
-  },
-];
-
 const Index = () => {
+  const { settings } = useAdmin();
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [section, setSection] = useState<'banner' | 'system' | 'media'>('banner');
   const [currentAppList, setCurrentAppList] = useState<App[]>(systemApps);
   const columns = 6; // 6 colunas para apps do sistema
+
+  // Converter apps do admin para o formato do componente
+  const mediaApps = settings.apps
+    .filter(app => app.enabled)
+    .sort((a, b) => a.order - b.order)
+    .map(app => ({
+      id: app.id,
+      icon: (LucideIcons as any)[app.icon] || Globe,
+      label: app.name,
+      url: app.url,
+      packageName: app.packageName
+    }));
 
   const openApp = (app: App) => {
     if (app.packageName) {
@@ -203,21 +194,23 @@ const Index = () => {
       <TVHeader />
       
       <main className="flex-1 px-12 py-8 space-y-8 overflow-y-auto">
-        <section>
-          <FeaturedBanner
-            title="CHEGOU A HORA"
-            subtitle="DE VOCÊ TER TUDO"
-            logo="RedPlay"
-            focused={section === 'banner'}
-            onClick={() => {
-              window.open('https://redplay.com.br', '_blank');
-              toast({
-                title: "Abrindo RedPlay",
-                description: "Seu serviço de streaming premium",
-              });
-            }}
-          />
-        </section>
+        {settings.banner.enabled && (
+          <section>
+            <FeaturedBanner
+              title={settings.banner.title}
+              subtitle={settings.banner.subtitle}
+              logo={settings.banner.logo}
+              focused={section === 'banner'}
+              onClick={() => {
+                window.open('https://redplay.com.br', '_blank');
+                toast({
+                  title: "Abrindo RedPlay",
+                  description: "Seu serviço de streaming premium",
+                });
+              }}
+            />
+          </section>
+        )}
 
         <section>
           <h2 className="text-3xl font-semibold text-foreground mb-6 px-2">
