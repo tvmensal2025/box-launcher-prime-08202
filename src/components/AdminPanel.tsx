@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAdmin, AppConfig, BannerConfig, ThemeConfig, ClockConfig } from '@/contexts/AdminContext';
+import { useAdmin, AppConfig, MusicAppConfig, BannerConfig, ThemeConfig, ClockConfig } from '@/contexts/AdminContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +28,10 @@ export const AdminPanel = () => {
     updateSettings({ apps: newApps });
   };
 
+  const updateMusicApps = (newMusicApps: MusicAppConfig[]) => {
+    updateSettings({ musicApps: newMusicApps });
+  };
+
   const updateBanner = (newBanner: Partial<BannerConfig>) => {
     updateSettings({ banner: { ...settings.banner, ...newBanner } });
   };
@@ -51,12 +55,34 @@ export const AdminPanel = () => {
     updateApps([...settings.apps, newApp]);
   };
 
+  const addMusicApp = () => {
+    const newMusicApp: MusicAppConfig = {
+      id: `music-app-${Date.now()}`,
+      name: 'Novo App de Música',
+      icon: 'Music',
+      enabled: true,
+      order: settings.musicApps.length,
+      category: 'streaming'
+    };
+    updateMusicApps([...settings.musicApps, newMusicApp]);
+  };
+
   const removeApp = (appId: string) => {
     updateApps(settings.apps.filter(app => app.id !== appId));
   };
 
+  const removeMusicApp = (appId: string) => {
+    updateMusicApps(settings.musicApps.filter(app => app.id !== appId));
+  };
+
   const updateApp = (appId: string, updates: Partial<AppConfig>) => {
     updateApps(settings.apps.map(app => 
+      app.id === appId ? { ...app, ...updates } : app
+    ));
+  };
+
+  const updateMusicApp = (appId: string, updates: Partial<MusicAppConfig>) => {
+    updateMusicApps(settings.musicApps.map(app => 
       app.id === appId ? { ...app, ...updates } : app
     ));
   };
@@ -69,6 +95,16 @@ export const AdminPanel = () => {
       app.order = index;
     });
     updateApps(newApps);
+  };
+
+  const reorderMusicApps = (fromIndex: number, toIndex: number) => {
+    const newMusicApps = [...settings.musicApps];
+    const [movedApp] = newMusicApps.splice(fromIndex, 1);
+    newMusicApps.splice(toIndex, 0, movedApp);
+    newMusicApps.forEach((app, index) => {
+      app.order = index;
+    });
+    updateMusicApps(newMusicApps);
   };
 
   if (!isAdminMode) return null;
@@ -97,9 +133,12 @@ export const AdminPanel = () => {
         
         <CardContent className="overflow-y-auto max-h-[calc(92vh-140px)] p-6">
           <Tabs defaultValue="apps" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1">
+            <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/50 p-1">
               <TabsTrigger value="apps" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Apps
+              </TabsTrigger>
+              <TabsTrigger value="music" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Música
               </TabsTrigger>
               <TabsTrigger value="banner" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                 Banner
@@ -187,6 +226,111 @@ export const AdminPanel = () => {
                           variant="destructive"
                           size="sm"
                           onClick={() => removeApp(app.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="music" className="space-y-6 pt-6">
+              <div className="flex justify-between items-center">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                    <Music className="w-5 h-5 text-primary" />
+                    Gerenciar Apps de Música
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">Configure os apps de música que aparecem no launcher</p>
+                </div>
+                <Button onClick={addMusicApp} size="default" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar App de Música
+                </Button>
+              </div>
+              
+              <div className="space-y-4">
+                {settings.musicApps
+                  .sort((a, b) => a.order - b.order)
+                  .map((app, index) => (
+                  <Card key={app.id} className="p-5 bg-gradient-to-br from-card to-card/50 border-border/50 hover:border-primary/30 transition-colors">
+                    <div className="flex items-center gap-4">
+                      <GripVertical className="w-5 h-5 text-muted-foreground cursor-move hover:text-primary transition-colors" />
+                      
+                      <div className="flex-1 grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor={`music-app-name-${app.id}`}>Nome</Label>
+                          <Input
+                            id={`music-app-name-${app.id}`}
+                            value={app.name}
+                            onChange={(e) => updateMusicApp(app.id, { name: e.target.value })}
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`music-app-icon-${app.id}`}>Ícone</Label>
+                          <Input
+                            id={`music-app-icon-${app.id}`}
+                            value={app.icon}
+                            onChange={(e) => updateMusicApp(app.id, { icon: e.target.value })}
+                            placeholder="Nome do ícone Lucide"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`music-app-url-${app.id}`}>URL (opcional)</Label>
+                          <Input
+                            id={`music-app-url-${app.id}`}
+                            value={app.url || ''}
+                            onChange={(e) => updateMusicApp(app.id, { url: e.target.value })}
+                            placeholder="https://exemplo.com"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`music-app-package-${app.id}`}>Package Android</Label>
+                          <Input
+                            id={`music-app-package-${app.id}`}
+                            value={app.packageName || ''}
+                            onChange={(e) => updateMusicApp(app.id, { packageName: e.target.value })}
+                            placeholder="com.exemplo.music"
+                          />
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor={`music-app-category-${app.id}`}>Categoria</Label>
+                          <Select
+                            value={app.category}
+                            onValueChange={(value: any) => updateMusicApp(app.id, { category: value })}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="streaming">Streaming</SelectItem>
+                              <SelectItem value="local">Local</SelectItem>
+                              <SelectItem value="radio">Rádio</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center space-x-2">
+                          <Switch
+                            id={`music-app-enabled-${app.id}`}
+                            checked={app.enabled}
+                            onCheckedChange={(checked) => updateMusicApp(app.id, { enabled: checked })}
+                          />
+                          <Label htmlFor={`music-app-enabled-${app.id}`}>Ativo</Label>
+                        </div>
+                        
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeMusicApp(app.id)}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>

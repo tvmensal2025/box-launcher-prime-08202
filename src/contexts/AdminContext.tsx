@@ -10,6 +10,17 @@ export interface AppConfig {
   order: number;
 }
 
+export interface MusicAppConfig {
+  id: string;
+  name: string;
+  icon: string;
+  url?: string;
+  packageName?: string;
+  enabled: boolean;
+  order: number;
+  category: 'streaming' | 'local' | 'radio';
+}
+
 export interface BannerConfig {
   title: string;
   subtitle: string;
@@ -39,6 +50,7 @@ export interface ClockConfig {
 
 export interface AdminSettings {
   apps: AppConfig[];
+  musicApps: MusicAppConfig[];
   banner: BannerConfig;
   theme: ThemeConfig;
   clock: ClockConfig;
@@ -71,6 +83,62 @@ const defaultSettings: AdminSettings = {
       url: 'https://dl.ntdev.in/58331',
       enabled: true,
       order: 2
+    }
+  ],
+  musicApps: [
+    {
+      id: 'spotify',
+      name: 'Spotify',
+      icon: 'Music',
+      packageName: 'com.spotify.music',
+      enabled: true,
+      order: 0,
+      category: 'streaming'
+    },
+    {
+      id: 'youtube-music',
+      name: 'YouTube Music',
+      icon: 'Youtube',
+      packageName: 'com.google.android.apps.youtube.music',
+      enabled: true,
+      order: 1,
+      category: 'streaming'
+    },
+    {
+      id: 'deezer',
+      name: 'Deezer',
+      icon: 'Music',
+      packageName: 'deezer.android.app',
+      enabled: true,
+      order: 2,
+      category: 'streaming'
+    },
+    {
+      id: 'apple-music',
+      name: 'Apple Music',
+      icon: 'Music',
+      packageName: 'com.apple.android.music',
+      enabled: true,
+      order: 3,
+      category: 'streaming'
+    },
+    {
+      id: 'tidal',
+      name: 'Tidal',
+      icon: 'Music',
+      packageName: 'com.aspiro.tidal',
+      enabled: true,
+      order: 4,
+      category: 'streaming'
+    },
+    {
+      id: 'soundcloud',
+      name: 'SoundCloud',
+      icon: 'Music',
+      packageName: 'com.soundcloud.android',
+      enabled: true,
+      order: 5,
+      category: 'streaming'
     }
   ],
   banner: {

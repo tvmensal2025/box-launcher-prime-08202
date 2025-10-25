@@ -74,7 +74,7 @@ const systemApps: App[] = [
 const Index = () => {
   const { settings } = useAdmin();
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const [section, setSection] = useState<'banner' | 'system' | 'media'>('banner');
+  const [section, setSection] = useState<'banner' | 'system' | 'media' | 'music'>('banner');
   const [currentAppList, setCurrentAppList] = useState<App[]>(systemApps);
   const columns = 6; // 6 colunas para apps do sistema
 
@@ -85,6 +85,18 @@ const Index = () => {
     .map(app => ({
       id: app.id,
       icon: (LucideIcons as any)[app.icon] || Globe,
+      label: app.name,
+      url: app.url,
+      packageName: app.packageName
+    }));
+
+  // Converter apps de música para o formato do componente
+  const musicApps = settings.musicApps
+    .filter(app => app.enabled)
+    .sort((a, b) => a.order - b.order)
+    .map(app => ({
+      id: app.id,
+      icon: (LucideIcons as any)[app.icon] || Music,
       label: app.name,
       url: app.url,
       packageName: app.packageName
@@ -130,13 +142,13 @@ const Index = () => {
       switch (e.key) {
         case "ArrowRight":
           e.preventDefault();
-          if (section === 'system' || section === 'media') {
+          if (section === 'system' || section === 'media' || section === 'music') {
             setFocusedIndex((prev) => (prev + 1) % totalApps);
           }
           break;
         case "ArrowLeft":
           e.preventDefault();
-          if (section === 'system' || section === 'media') {
+          if (section === 'system' || section === 'media' || section === 'music') {
             setFocusedIndex((prev) => (prev - 1 + totalApps) % totalApps);
           }
           break;
@@ -150,6 +162,10 @@ const Index = () => {
             setSection('media');
             setCurrentAppList(mediaApps);
             setFocusedIndex(0);
+          } else if (section === 'media') {
+            setSection('music');
+            setCurrentAppList(musicApps);
+            setFocusedIndex(0);
           } else {
             const nextRowIndex = (currentRow + 1) * columns + currentCol;
             setFocusedIndex(nextRowIndex < totalApps ? nextRowIndex : focusedIndex);
@@ -162,6 +178,10 @@ const Index = () => {
           } else if (section === 'media' && currentRow === 0) {
             setSection('system');
             setCurrentAppList(systemApps);
+            setFocusedIndex(0);
+          } else if (section === 'music' && currentRow === 0) {
+            setSection('media');
+            setCurrentAppList(mediaApps);
             setFocusedIndex(0);
           } else if (currentRow > 0) {
             setFocusedIndex((currentRow - 1) * columns + currentCol);
@@ -257,8 +277,30 @@ const Index = () => {
           </div>
         </section>
 
+        <section>
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent mb-8 px-2">
+            Música
+          </h2>
+          <div className="grid grid-cols-3 gap-8">
+            {musicApps.map((app, index) => (
+              <AppIcon
+                key={app.id}
+                icon={app.icon}
+                label={app.label}
+                focused={section === 'music' && focusedIndex === index}
+                onClick={() => {
+                  setSection('music');
+                  setCurrentAppList(musicApps);
+                  setFocusedIndex(index);
+                  openApp(app);
+                }}
+              />
+            ))}
+          </div>
+        </section>
+
         <div className="fixed bottom-4 right-6 text-xs text-muted-foreground bg-card/80 px-3 py-1.5 rounded border border-border">
-          Use as setas ← → ↑ ↓ para navegar | Enter para abrir | ↑↓ para alternar seções
+          Use as setas ← → ↑ ↓ para navegar | Enter para abrir | ↑↓ para alternar seções (Banner → Sistema → Entretenimento → Música)
         </div>
       </main>
     </div>
