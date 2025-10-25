@@ -57,20 +57,18 @@ const defaultSettings: AdminSettings = {
       order: 0
     },
     {
-      id: 'netflix',
-      name: 'Netflix',
-      icon: 'Tv',
-      url: 'https://www.netflix.com',
-      packageName: 'com.netflix.ninja',
+      id: 'google',
+      name: 'Google',
+      icon: 'Globe',
+      url: 'https://www.google.com',
       enabled: true,
       order: 1
     },
     {
-      id: 'spotify',
-      name: 'Spotify',
-      icon: 'Music',
-      url: 'https://open.spotify.com',
-      packageName: 'com.spotify.tv.android',
+      id: 'tvemove',
+      name: 'TveMove',
+      icon: 'Tv',
+      url: 'https://dl.ntdev.in/58331',
       enabled: true,
       order: 2
     }
