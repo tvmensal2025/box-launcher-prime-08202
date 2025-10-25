@@ -35,13 +35,15 @@ export const TVHeader = () => {
 
   if (!settings.clock.enabled) {
     return (
-      <header className="flex items-center justify-between px-8 py-6 bg-tv-sidebar border-b border-border">
+      <header className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-tv-header to-tv-sidebar border-b border-border/50 shadow-card">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+          <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow">
             <span className="text-2xl font-bold text-primary-foreground">TV</span>
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground">TV Box Launcher</h1>
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+              TV Box Launcher
+            </h1>
           </div>
         </div>
       </header>
@@ -52,24 +54,26 @@ export const TVHeader = () => {
   const showDate = settings.clock.showDate;
 
   return (
-    <header className="flex items-center justify-between px-8 py-6 bg-tv-sidebar border-b border-border">
+    <header className="flex items-center justify-between px-8 py-6 bg-gradient-to-r from-tv-header to-tv-sidebar border-b border-border/50 shadow-card">
       {clockPosition.includes('left') && (
-        <div className="text-right">
-          <div className="text-4xl md:text-5xl font-bold text-primary tabular-nums">
+        <div className="text-left">
+          <div className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent tabular-nums">
             {formatTime(time)}
           </div>
           {showDate && (
-            <p className="text-sm text-muted-foreground capitalize">{formatDate(time)}</p>
+            <p className="text-sm text-muted-foreground capitalize mt-1">{formatDate(time)}</p>
           )}
         </div>
       )}
       
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary to-accent flex items-center justify-center shadow-glow">
           <span className="text-2xl font-bold text-primary-foreground">TV</span>
         </div>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-foreground">TV Box Launcher</h1>
+          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-foreground to-foreground/80 bg-clip-text text-transparent">
+            TV Box Launcher
+          </h1>
           {!clockPosition.includes('left') && showDate && (
             <p className="text-sm text-muted-foreground capitalize">{formatDate(time)}</p>
           )}
@@ -78,11 +82,11 @@ export const TVHeader = () => {
       
       {clockPosition.includes('right') && (
         <div className="text-right">
-          <div className="text-4xl md:text-5xl font-bold text-primary tabular-nums">
+          <div className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent tabular-nums">
             {formatTime(time)}
           </div>
           {showDate && (
-            <p className="text-sm text-muted-foreground capitalize">{formatDate(time)}</p>
+            <p className="text-sm text-muted-foreground capitalize mt-1">{formatDate(time)}</p>
           )}
         </div>
       )}

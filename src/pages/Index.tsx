@@ -190,10 +190,10 @@ const Index = () => {
   }, [handleKeyDown]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-tv-sidebar flex flex-col overflow-hidden">
       <TVHeader />
       
-      <main className="flex-1 px-12 py-8 space-y-8 overflow-y-auto">
+      <main className="flex-1 px-12 py-8 space-y-10 overflow-y-auto">
         {settings.banner.enabled && (
           <section>
             <FeaturedBanner
@@ -213,7 +213,7 @@ const Index = () => {
         )}
 
         <section>
-          <h2 className="text-3xl font-semibold text-foreground mb-6 px-2">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent mb-8 px-2">
             Sistema
           </h2>
           <div className="grid grid-cols-6 gap-4 mb-8">
@@ -236,7 +236,7 @@ const Index = () => {
         </section>
 
         <section>
-          <h2 className="text-3xl font-semibold text-foreground mb-6 px-2">
+          <h2 className="text-4xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent mb-8 px-2">
             Entretenimento
           </h2>
           <div className="grid grid-cols-3 gap-8">

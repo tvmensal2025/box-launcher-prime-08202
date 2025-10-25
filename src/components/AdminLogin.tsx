@@ -24,15 +24,17 @@ export const AdminLogin = () => {
   };
 
   return (
-    <div className="fixed bottom-4 left-4 z-40">
-      <Card className="w-80">
+    <div className="fixed bottom-6 left-6 z-40">
+      <Card className="w-80 shadow-elevated border-border/50 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm">
         <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-sm">
-            <Settings className="w-4 h-4" />
+          <CardTitle className="flex items-center gap-2 text-base">
+            <div className="p-1.5 rounded-lg bg-gradient-to-br from-primary to-accent">
+              <Settings className="w-4 h-4 text-primary-foreground" />
+            </div>
             Acesso Admin
           </CardTitle>
-          <CardDescription className="text-xs">
-            Digite a senha para personalizar
+          <CardDescription className="text-sm">
+            Digite a senha para personalizar o launcher
           </CardDescription>
         </CardHeader>
         
@@ -68,7 +70,7 @@ export const AdminLogin = () => {
               )}
             </div>
             
-            <Button type="submit" size="sm" className="w-full">
+            <Button type="submit" size="sm" className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90">
               Entrar
             </Button>
           </form>

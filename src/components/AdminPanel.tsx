@@ -74,48 +74,63 @@ export const AdminPanel = () => {
   if (!isAdminMode) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-4xl max-h-[90vh] overflow-y-auto">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Settings className="w-5 h-5" />
-              Painel de Administração
-            </CardTitle>
-            <CardDescription>
-              Personalize completamente seu launcher TV Box
-            </CardDescription>
+    <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+      <Card className="w-full max-w-5xl max-h-[92vh] overflow-hidden shadow-elevated border-2 border-border/50">
+        <CardHeader className="bg-gradient-to-r from-tv-sidebar to-card border-b border-border/50 sticky top-0 z-10 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="flex items-center gap-3 text-2xl">
+                <div className="p-2 rounded-lg bg-gradient-to-br from-primary to-accent">
+                  <Settings className="w-5 h-5 text-primary-foreground" />
+                </div>
+                Painel de Administração
+              </CardTitle>
+              <CardDescription className="text-base">
+                Personalize completamente seu launcher TV Box de forma profissional
+              </CardDescription>
+            </div>
+            <Button variant="outline" onClick={logoutAdmin} className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive">
+              Sair
+            </Button>
           </div>
-          <Button variant="outline" onClick={logoutAdmin}>
-            Sair
-          </Button>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="overflow-y-auto max-h-[calc(92vh-140px)] p-6">
           <Tabs defaultValue="apps" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="apps">Apps</TabsTrigger>
-              <TabsTrigger value="banner">Banner</TabsTrigger>
-              <TabsTrigger value="theme">Tema</TabsTrigger>
-              <TabsTrigger value="clock">Relógio</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-4 h-12 bg-muted/50 p-1">
+              <TabsTrigger value="apps" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Apps
+              </TabsTrigger>
+              <TabsTrigger value="banner" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Banner
+              </TabsTrigger>
+              <TabsTrigger value="theme" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Tema
+              </TabsTrigger>
+              <TabsTrigger value="clock" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                Relógio
+              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="apps" className="space-y-4">
+            <TabsContent value="apps" className="space-y-6 pt-6">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">Gerenciar Aplicativos</h3>
-                <Button onClick={addApp} size="sm">
+                <div>
+                  <h3 className="text-xl font-bold text-foreground">Gerenciar Aplicativos</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Configure os apps que aparecem no launcher</p>
+                </div>
+                <Button onClick={addApp} size="default" className="bg-gradient-to-r from-primary to-accent hover:opacity-90">
                   <Plus className="w-4 h-4 mr-2" />
                   Adicionar App
                 </Button>
               </div>
               
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {settings.apps
                   .sort((a, b) => a.order - b.order)
                   .map((app, index) => (
-                  <Card key={app.id} className="p-4">
+                  <Card key={app.id} className="p-5 bg-gradient-to-br from-card to-card/50 border-border/50 hover:border-primary/30 transition-colors">
                     <div className="flex items-center gap-4">
-                      <GripVertical className="w-4 h-4 text-muted-foreground cursor-move" />
+                      <GripVertical className="w-5 h-5 text-muted-foreground cursor-move hover:text-primary transition-colors" />
                       
                       <div className="flex-1 grid grid-cols-2 gap-4">
                         <div>
@@ -182,10 +197,16 @@ export const AdminPanel = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="banner" className="space-y-4">
-              <h3 className="text-lg font-semibold">Configurações do Banner</h3>
+            <TabsContent value="banner" className="space-y-6 pt-6">
+              <div>
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                  <Image className="w-5 h-5 text-primary" />
+                  Configurações do Banner
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">Personalize o banner principal do launcher</p>
+              </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-5">
                 <div>
                   <Label htmlFor="banner-title">Título</Label>
                   <Input
@@ -244,76 +265,142 @@ export const AdminPanel = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="theme" className="space-y-4">
-              <h3 className="text-lg font-semibold">Configurações de Tema</h3>
+            <TabsContent value="theme" className="space-y-6 pt-6">
+              <div>
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                  <Palette className="w-5 h-5 text-primary" />
+                  Configurações de Tema
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">Ajuste as cores do tema para combinar com sua marca</p>
+              </div>
               
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="primary-color">Cor Primária</Label>
-                  <Input
-                    id="primary-color"
-                    type="color"
-                    value={settings.theme.primaryColor}
-                    onChange={(e) => updateTheme({ primaryColor: e.target.value })}
-                  />
+              <div className="grid grid-cols-3 gap-5">
+                <div className="space-y-2">
+                  <Label htmlFor="primary-color" className="text-sm font-semibold">Cor Primária</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="primary-color"
+                      type="color"
+                      value={settings.theme.primaryColor}
+                      onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.primaryColor}
+                      onChange={(e) => updateTheme({ primaryColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="secondary-color">Cor Secundária</Label>
-                  <Input
-                    id="secondary-color"
-                    type="color"
-                    value={settings.theme.secondaryColor}
-                    onChange={(e) => updateTheme({ secondaryColor: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="secondary-color" className="text-sm font-semibold">Cor Secundária</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="secondary-color"
+                      type="color"
+                      value={settings.theme.secondaryColor}
+                      onChange={(e) => updateTheme({ secondaryColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.secondaryColor}
+                      onChange={(e) => updateTheme({ secondaryColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="accent-color">Cor de Destaque</Label>
-                  <Input
-                    id="accent-color"
-                    type="color"
-                    value={settings.theme.accentColor}
-                    onChange={(e) => updateTheme({ accentColor: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="accent-color" className="text-sm font-semibold">Cor de Destaque</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="accent-color"
+                      type="color"
+                      value={settings.theme.accentColor}
+                      onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.accentColor}
+                      onChange={(e) => updateTheme({ accentColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="bg-color">Cor de Fundo</Label>
-                  <Input
-                    id="bg-color"
-                    type="color"
-                    value={settings.theme.backgroundColor}
-                    onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="bg-color" className="text-sm font-semibold">Cor de Fundo</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="bg-color"
+                      type="color"
+                      value={settings.theme.backgroundColor}
+                      onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.backgroundColor}
+                      onChange={(e) => updateTheme({ backgroundColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="text-color">Cor do Texto</Label>
-                  <Input
-                    id="text-color"
-                    type="color"
-                    value={settings.theme.textColor}
-                    onChange={(e) => updateTheme({ textColor: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="text-color" className="text-sm font-semibold">Cor do Texto</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="text-color"
+                      type="color"
+                      value={settings.theme.textColor}
+                      onChange={(e) => updateTheme({ textColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.textColor}
+                      onChange={(e) => updateTheme({ textColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="card-color">Cor dos Cards</Label>
-                  <Input
-                    id="card-color"
-                    type="color"
-                    value={settings.theme.cardColor}
-                    onChange={(e) => updateTheme({ cardColor: e.target.value })}
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="card-color" className="text-sm font-semibold">Cor dos Cards</Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="card-color"
+                      type="color"
+                      value={settings.theme.cardColor}
+                      onChange={(e) => updateTheme({ cardColor: e.target.value })}
+                      className="h-12 w-24 cursor-pointer"
+                    />
+                    <Input
+                      value={settings.theme.cardColor}
+                      onChange={(e) => updateTheme({ cardColor: e.target.value })}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
                 </div>
               </div>
             </TabsContent>
 
-            <TabsContent value="clock" className="space-y-4">
-              <h3 className="text-lg font-semibold">Configurações do Relógio</h3>
+            <TabsContent value="clock" className="space-y-6 pt-6">
+              <div>
+                <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
+                  <Clock className="w-5 h-5 text-primary" />
+                  Configurações do Relógio
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">Configure a exibição de data e hora no launcher</p>
+              </div>
               
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="clock-enabled"
